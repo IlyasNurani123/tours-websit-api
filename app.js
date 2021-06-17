@@ -1,9 +1,9 @@
 const express = require("express");
+const app = express();
+
 const dotEnv = require("dotenv");
 
 dotEnv.config();
-
-const app = express();
 
 app.get("/", (req, res, next) => {
   res.send("Hello node serve ");
