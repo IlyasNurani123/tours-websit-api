@@ -13,8 +13,10 @@
   "author": "Ilyas",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "mongoose": "^5.12.14"
   },
   "devDependencies": {
     "eslint": "^7.28.0",
