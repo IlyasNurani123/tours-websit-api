@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const tourSchema = new Schema({
     name:{
         type:String,
-        require:[true, "A tour must have a name"],
+        required:[true, "A tour must have a name"],
         unique:true
     },
     rating:{
@@ -14,7 +14,7 @@ const tourSchema = new Schema({
     },
     price:{
         type:Number,
-        require:[true, "A tour must have a price"]
+        required:[true, "A tour must have a price"]
     }
 
 });
