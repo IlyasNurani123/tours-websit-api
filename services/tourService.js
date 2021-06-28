@@ -14,16 +14,26 @@ class TourServices extends BaseService {
       let tour = new Tour(serviceData);
       console.log("tour", tour);
       let result = await tour.save();
-      return result;
+      return formateMongoData(result);
     } catch (error) {
       console.log("Some went wrong : services :create tour!");
       throw new Error(error)
     }
   }
 
-  getAlltour = async () => {
+  getAlltour = async (dataQuery) => {
     try {
-      let tours = await Tour.find({});
+      const queryObj = { ...dataQuery }
+      const excludeQueryData = ['page', 'sort', 'limit', 'fields']
+      excludeQueryData.map((el) => delete queryObj[el])
+
+      const query = Tour.find(queryObj);
+      // const tours = await Tour.find()
+      //   .where("duration")
+      //   .equals(5)
+      //   .where("diffculty")
+      //   .equals("easy");
+      const tours = await query;
       return formateMongoData(tours);
     } catch (error) {
       console.log("Some went wrong :: get Tours inn touService class");

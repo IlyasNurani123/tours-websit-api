@@ -6,7 +6,7 @@ class TourController {
 
     static async createTour(req, res, next) {
         try {
-            const tourService = new TourService(req);
+            const tourService = new TourService;
             const result = await tourService.createTour(req.body);
             res.status(201).json({
                 status: "success",
@@ -23,11 +23,13 @@ class TourController {
     static async getAlltour(req, res, next) {
 
         try {
+
             const tourServices = new TourService;
-            const result = await tourServices.getAlltour();
+            const tours = await tourServices.getAlltour(req.query);
             res.status(200).json({
                 status: "success",
-                data: result
+                result: tours.length,
+                data: tours
 
             });
         }
@@ -39,7 +41,7 @@ class TourController {
     static async getTour(req, res, next) {
 
         try {
-            const tourServices = new TourService(req);
+            const tourServices = new TourService;
             const result = await tourServices.getTour(req.params.id);
             res.status(200).json({
                 status: "success",
@@ -56,7 +58,7 @@ class TourController {
     static async updateTour(req, res, next) {
 
         try {
-            const tourServices = new TourService(req);
+            const tourServices = new TourService;
             const result = await tourServices.updateTour({
                 id: req.params.id,
                 updateInfo: req.body
@@ -76,7 +78,7 @@ class TourController {
     static async deleteTour(req, res, next) {
 
         try {
-            const tourServices = new TourService(req);
+            const tourServices = new TourService;
             const result = await tourServices.deleteTour(req.params.id);
             res.status(200).json({
                 status: "success",
