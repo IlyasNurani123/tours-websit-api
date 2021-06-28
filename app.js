@@ -7,6 +7,7 @@ const router = require("./routes");
 const app = express();
 dotEnv.config();
 db.connectDb();
+
 app.use(cors());
 //require payload middleware
 app.use(express.json());
@@ -20,7 +21,7 @@ app.listen(PORT, () => {
   console.log(`Server listen on port ${PORT}`);
 });
 
-app.use( (err, req, res, next)=> {
+app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send({
     status: 500,

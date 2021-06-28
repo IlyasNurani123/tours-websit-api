@@ -1,6 +1,6 @@
 const BaseService = require("./base.service");
 const Tour = require("../database/models/tourModel");
-const { formateMongoData, checkObjectId } = require("../helper/dbHelper")
+const { formateMongoData, checkObjectId } = require("../helper/dbHelper");
 
 
 class TourServices extends BaseService {
@@ -34,8 +34,8 @@ class TourServices extends BaseService {
   getTour = async (id) => {
     try {
       checkObjectId(id);
-      let tours = await Tour.findById(id);
-      return formateMongoData(tours);
+      let tour = await Tour.findById(id);
+      return formateMongoData(tour);
     } catch (error) {
       console.log("Some went wrong :: get Tours inn touService class");
       throw new Error(error);
@@ -50,9 +50,6 @@ class TourServices extends BaseService {
         new: true,
         runValidators: true
       });
-      if (!tour) {
-        throw new Error(constants.tourMessage.TOUR_NOT_FOUND);
-      }
       return formateMongoData(tour);
     } catch (error) {
       console.log("Some went wrong : services : updateProduct");
@@ -62,15 +59,11 @@ class TourServices extends BaseService {
 
   deleteTour = async (id) => {
     try {
-      console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::", id)
       checkObjectId(id);
       let tour = await Tour.findByIdAndDelete(id);
-      if (!tour) {
-        throw new Error(constants.productMessage.TOUR_NOT_FOUND);
-      }
       return formateMongoData(tour);
     } catch (error) {
-      console.log("Some went wrong :: get Tours inn touService class");
+      console.log("Some went wrong :: Delete Tour inn touService class");
       throw new Error(error);
     }
   }

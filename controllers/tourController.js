@@ -48,8 +48,8 @@ class TourController {
             });
         }
         catch (error) {
-            next(error);
-            // throw new Error(error);
+            // next(error);
+            throw new Error(error);
         }
     }
 

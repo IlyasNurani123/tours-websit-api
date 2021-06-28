@@ -6,7 +6,7 @@ class DbHelper {
     static formateMongoData(data) {
         if (Array.isArray(data)) {
             const newDataList = [];
-            for (value of data) {
+            for (let value of data) {
                 newDataList.push(value.toObject());
             }
             return newDataList;
@@ -15,6 +15,7 @@ class DbHelper {
     }
 
     static checkObjectId(id) {
+        console.log(id);
         if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error(constants.databaseMessage.INVALID_ID);
         }
