@@ -1,0 +1,46 @@
+[
+    {
+        "name": "ghanche",
+        "duration": 20,
+        "maxGroupSize": 5,
+        "diffculty": "easy",
+        "ratingsAverage": 5,
+        "ratingsQuantity": 1,
+        "summary": "it was great experience.I recommend, if anyone wants to visit he should be",
+        "description": "it really enjoyed",
+        "imageCover": "c/cd/img.png",
+        "images": [
+            "tour1.png",
+            "tour2.png",
+            "tour3.png"
+        ],
+        "startDates": [
+            "2022-01-5",
+            "2022-02-5",
+            "2022-03-05"
+        ],
+        "price": 120
+    },
+    {
+        "name": "",
+        "duration": 5,
+        "maxGroupSize": 10,
+        "diffculty": "easy",
+        "ratingsAverage": 4,
+        "ratingsQuantity": 2,
+        "summary": "it was great experience.I recommend, if anyone wants to visit he should be",
+        "description": "it really enjoyed",
+        "imageCover": "c/cd/img.png",
+        "images": [
+            "tour1.png",
+            "tour2.png",
+            "tour3.png"
+        ],
+        "startDates": [
+            "2022-01-5",
+            "2022-02-5",
+            "2022-03-05"
+        ],
+        "price": 20
+    }
+]
