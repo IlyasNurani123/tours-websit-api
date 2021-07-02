@@ -27,7 +27,36 @@ class TourServices extends BaseService {
       const excludeQueryData = ['page', 'sort', 'limit', 'fields']
       excludeQueryData.map((el) => delete queryObj[el])
 
-      const query = Tour.find(queryObj);
+      // Advance Filter
+      let queryStr = JSON.stringify(queryObj);
+      queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => (`$${match}`));
+      console.log(JSON.parse(queryStr))
+      // Simple Filter
+      let query = Tour.find(JSON.parse(queryStr));
+      if (dataQuery.sort) {
+        const sortBy = dataQuery.sort.split(',').join(' ');
+        console.log(sortBy);
+        query = query.sort(sortBy);
+      } else {
+        query = query.sort('-createdAt');
+      }
+
+      if (dataQuery.fields) {
+        const fields = dataQuery.fields.split(',').join(' ');
+        query = query.select(fields);
+      }
+
+      const page = dataQuery.page * 1 || 1;
+      const limit = dataQuery.limit * 1 || 1;
+      const skip = (page - 1) * limit;
+      query = query.skip(skip).limit(limit);
+
+      if (dataQuery.page) {
+        const numTours = await Tour.countDocuments();
+        if (skip >= numTours) throw new Error("This Page doesn't exist")
+
+      }
+
       // const tours = await Tour.find()
       //   .where("duration")
       //   .equals(5)
