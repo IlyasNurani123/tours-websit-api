@@ -20,12 +20,12 @@ class TourController {
 
     }
 
-    static async getAlltour(req, res, next) {
+    static async getAlltours(req, res, next) {
 
         try {
 
             const tourServices = new TourService;
-            const tours = await tourServices.getAlltour(req.query);
+            const tours = await tourServices.getAlltours(req.query);
             res.status(200).json({
                 status: "success",
                 result: tours.length,
@@ -91,6 +91,7 @@ class TourController {
             // throw new Error(error);
         }
     }
+
 
 }
 
