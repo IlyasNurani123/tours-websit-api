@@ -1,6 +1,7 @@
 const BaseService = require("./base.service");
+const Filter = require("../utlis/helper/filter");
 const Tour = require("../database/models/tourModel");
-const { formateMongoData, checkObjectId } = require("../helper/dbHelper");
+const { formateMongoData, checkObjectId } = require("../utlis/helper/dbHelper");
 
 
 class TourServices extends BaseService {
@@ -21,51 +22,14 @@ class TourServices extends BaseService {
     }
   }
 
-  getAlltour = async (dataQuery) => {
+  getAlltours = async (dataQuery) => {
     try {
-      const queryObj = { ...dataQuery }
-      const excludeQueryData = ['page', 'sort', 'limit', 'fields']
-      excludeQueryData.map((el) => delete queryObj[el])
-
-      // Advance Filter
-      let queryStr = JSON.stringify(queryObj);
-      queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => (`$${match}`));
-      console.log(JSON.parse(queryStr))
-      // Simple Filter
-      let query = Tour.find(JSON.parse(queryStr));
-      if (dataQuery.sort) {
-        const sortBy = dataQuery.sort.split(',').join(' ');
-        console.log(sortBy);
-        query = query.sort(sortBy);
-      } else {
-        query = query.sort('-createdAt');
-      }
-
-      if (dataQuery.fields) {
-        const fields = dataQuery.fields.split(',').join(' ');
-        query = query.select(fields);
-      }
-
-      const page = dataQuery.page * 1 || 1;
-      const limit = dataQuery.limit * 1 || 1;
-      const skip = (page - 1) * limit;
-      query = query.skip(skip).limit(limit);
-
-      if (dataQuery.page) {
-        const numTours = await Tour.countDocuments();
-        if (skip >= numTours) throw new Error("This Page doesn't exist")
-
-      }
-
-      // const tours = await Tour.find()
-      //   .where("duration")
-      //   .equals(5)
-      //   .where("diffculty")
-      //   .equals("easy");
-      const tours = await query;
+      const filtrData = new Filter(Tour.find(), dataQuery).filterData().sort().limitFields().paginate();
+      const tours = await filtrData.query;
+      console.log("::::::::::::::::::::::::::::::", tours);
       return formateMongoData(tours);
     } catch (error) {
-      console.log("Some went wrong :: get Tours inn touService class");
+      console.log("Some went wrong :: get Tours in touService class");
       throw new Error(error);
     }
   }
@@ -106,6 +70,65 @@ class TourServices extends BaseService {
       throw new Error(error);
     }
   }
+
+  getTourStatsService = async (req) => {
+    try {
+      const stats = await Tour.aggregate([
+        {
+          $match: { ratingsAverage: { $gte: 3 } }
+        },
+        {
+          $group: {
+            _id: { $toUpper: '$diffculty' },
+            numTour: { $sum: 1 },
+            numRating: { $sum: '$ratingsQuantity' },
+            avgRating: { $avg: '$ratingsAverage' },
+            avgPrice: { $avg: '$price' },
+            minPrice: { $min: '$price' },
+            maxPrice: { $max: '$price' },
+          }
+        }, {
+          $sort: { avgPrice: 1 }
+        }
+      ])
+      return stats;
+    } catch (error) {
+      console.log("Some went wrong :: GetTourStatsServiceTour inn Toue Stats service class");
+      throw new Error(error);
+    }
+  }
+
+
+  getMonthlyPlanService = async (req) => {
+    try {
+      const year = req.year * 1;
+      const monthlyPlane = await Tour.aggregate([
+        {
+          $unwind: "$startDates"
+        },
+        {
+          $match: {
+            startDates: {
+              $gte: new Date(`${year}-01-01`),
+              $lte: new Date(`${year}-12-31`),
+            }
+          }
+        },
+        {
+          $group: {
+            _id: { $month: '$startDates' },
+            numTourStart: { $sum: 1 },
+            tours: { $push: '$name' }
+          }
+        },
+      ])
+      return monthlyPlane;
+    } catch (error) {
+      console.log("Some went wrong :: GetTourStatsServiceTour inn Toue Stats service class");
+      throw new Error(error);
+    }
+  }
+
 }
 
 module.exports = TourServices;
