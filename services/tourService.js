@@ -1,7 +1,7 @@
 const BaseService = require("./base.service");
-const Filter = require("../helper/filter");
+const Filter = require("../utlis/helper/filter");
 const Tour = require("../database/models/tourModel");
-const { formateMongoData, checkObjectId } = require("../helper/dbHelper");
+const { formateMongoData, checkObjectId } = require("../utlis/helper/dbHelper");
 
 
 class TourServices extends BaseService {
@@ -67,6 +67,64 @@ class TourServices extends BaseService {
       return formateMongoData(tour);
     } catch (error) {
       console.log("Some went wrong :: Delete Tour inn touService class");
+      throw new Error(error);
+    }
+  }
+
+  getTourStatsService = async (req) => {
+    try {
+      const stats = await Tour.aggregate([
+        {
+          $match: { ratingsAverage: { $gte: 3 } }
+        },
+        {
+          $group: {
+            _id: { $toUpper: '$diffculty' },
+            numTour: { $sum: 1 },
+            numRating: { $sum: '$ratingsQuantity' },
+            avgRating: { $avg: '$ratingsAverage' },
+            avgPrice: { $avg: '$price' },
+            minPrice: { $min: '$price' },
+            maxPrice: { $max: '$price' },
+          }
+        }, {
+          $sort: { avgPrice: 1 }
+        }
+      ])
+      return stats;
+    } catch (error) {
+      console.log("Some went wrong :: GetTourStatsServiceTour inn Toue Stats service class");
+      throw new Error(error);
+    }
+  }
+
+
+  getMonthlyPlanService = async (req) => {
+    try {
+      const year = req.year * 1;
+      const monthlyPlane = await Tour.aggregate([
+        {
+          $unwind: "$startDates"
+        },
+        {
+          $match: {
+            startDates: {
+              $gte: new Date(`${year}-01-01`),
+              $lte: new Date(`${year}-12-31`),
+            }
+          }
+        },
+        {
+          $group: {
+            _id: { $month: '$startDates' },
+            numTourStart: { $sum: 1 },
+            tours: { $push: '$name' }
+          }
+        },
+      ])
+      return monthlyPlane;
+    } catch (error) {
+      console.log("Some went wrong :: GetTourStatsServiceTour inn Toue Stats service class");
       throw new Error(error);
     }
   }

@@ -1,6 +1,6 @@
 const TourService = require("../services/tourService");
 
-const constant = require("../constants");
+const constant = require("../utlis/constants");
 
 class TourController {
 
@@ -90,6 +90,42 @@ class TourController {
             next(error);
             // throw new Error(error);
         }
+    }
+
+    static async getTourStats(req, res, next) {
+
+        try {
+            const tourStats = new TourService;
+            const result = await tourStats.getTourStatsService(req.body);
+            res.status(200).json({
+                status: "success",
+                data: result,
+                message: constant.tourMessage.TOUR_STATS,
+            });
+        }
+        catch (error) {
+            next(error);
+            // throw new Error(error);
+        }
+
+    }
+
+    static async getMonthlyPlan(req, res, next) {
+
+        try {
+            const monthlyPlan = new TourService;
+            const result = await monthlyPlan.getMonthlyPlanService(req.params);
+            res.status(200).json({
+                status: "success",
+                data: result,
+                message: constant.tourMessage.MONTHLY_PLAN,
+            });
+        }
+        catch (error) {
+            next(error);
+            // throw new Error(error);
+        }
+
     }
 
 
